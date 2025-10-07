@@ -1,0 +1,130 @@
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { Box } from '@mui/material';
+
+const PUBLIC_ROUTES = [
+  '/',
+  '/admin-login',
+  '/coordinator-login',
+  '/beneficiary-login',
+  '/register',
+  '/beneficiary-register',
+  '/status/404',
+  '/status/500',
+  '/status/maintenance',
+  '/status/coming-soon'
+];
+
+const BaseLayout = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isChecking, setIsChecking] = useState(true);
+
+  const isPublicRoute = (pathname) => {
+    return PUBLIC_ROUTES.some(
+      (route) =>
+        pathname === route || (route !== '/' && pathname.startsWith(route))
+    );
+  };
+
+  const getAuthStatus = () => {
+    try {
+      // Try localStorage first
+      let token = localStorage.getItem('token');
+      let userData = localStorage.getItem('user');
+
+      // Fallback to sessionStorage
+      if (!token || !userData) {
+        token = sessionStorage.getItem('token');
+        userData = sessionStorage.getItem('user');
+      }
+
+      const user = userData ? JSON.parse(userData) : null;
+
+      return {
+        isAuthenticated: !!(token && user?.role),
+        user,
+        token
+      };
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      return { isAuthenticated: false, user: null };
+    }
+  };
+
+  const getLoginRoute = (currentPath) => {
+    const path = currentPath.toLowerCase();
+    if (path.includes('beneficiary')) return '/beneficiary-login';
+    if (path.includes('coordinator')) return '/coordinator-login';
+    if (path.includes('admin') || path.includes('dashboard') || path.includes('management')) return '/admin-login';
+    return '/';
+  };
+
+  const getDashboardRoute = (role) => {
+    switch (role) {
+      case 'beneficiary':
+        return '/beneficiary/dashboard';
+      case 'coordinator':
+        return '/coordinator/dashboard';
+      case 'admin':
+        return '/admin/dashboard';
+      default:
+        return '/';
+    }
+  };
+
+  useEffect(() => {
+    setIsChecking(true);
+    const currentPath = location.pathname;
+    const { isAuthenticated, user } = getAuthStatus();
+    const isPublic = isPublicRoute(currentPath);
+
+    console.log('🟦 BaseLayout Auth Check:', {
+      currentPath,
+      isAuthenticated,
+      isPublic,
+      userRole: user?.role
+    });
+
+    if (!isAuthenticated && !isPublic) {
+      console.log('🚫 Redirecting to login from:', currentPath);
+      navigate(getLoginRoute(currentPath), { replace: true });
+    } else if (isAuthenticated && isPublic && ['/beneficiary-login', '/coordinator-login', '/admin-login'].includes(currentPath)) {
+      // Redirect logged-in user away from login page
+      const dashboardRoute = getDashboardRoute(user?.role);
+      if (currentPath !== dashboardRoute) {
+        console.log('🔁 User already logged in, redirecting to dashboard');
+        navigate(dashboardRoute, { replace: true });
+      }
+    } else {
+      console.log('✅ Access allowed for:', currentPath);
+    }
+
+    setIsChecking(false);
+  }, [location.pathname, navigate]);
+
+  if (isChecking) {
+    return (
+      <Box
+        sx={{
+          flex: 1,
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {/* Optional: Loading spinner */}
+      </Box>
+    );
+  }
+
+  return <Box sx={{ flex: 1, height: '100%' }}>{children || <Outlet />}</Box>;
+};
+
+BaseLayout.propTypes = {
+  children: PropTypes.node
+};
+
+export default BaseLayout;

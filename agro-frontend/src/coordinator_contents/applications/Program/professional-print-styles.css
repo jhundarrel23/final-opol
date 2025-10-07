@@ -1,0 +1,623 @@
+/* Professional Print Styles for Agricultural Subsidy Reports */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #000;
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+
+/* Print-specific styles */
+@media print {
+  * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  body {
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  /* Hide non-printable elements */
+  .no-print,
+  .MuiButton-root,
+  .MuiIconButton-root,
+  button,
+  .print-hide {
+    display: none !important;
+  }
+  
+  /* Page setup */
+  @page {
+    margin: 0.75in;
+    size: A4;
+  }
+  
+  /* Headers and footers */
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20pt;
+    border-bottom: 2pt solid #2d5016;
+    padding-bottom: 10pt;
+  }
+  
+  .print-header .logo-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15pt;
+  }
+  
+  .print-header .logo {
+    height: 60pt;
+    max-width: 120pt;
+  }
+  
+  .print-header .title-section {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .print-header h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 5pt 0;
+  }
+  
+  .print-header .subtitle {
+    font-size: 11pt;
+    color: #666;
+    margin: 0;
+  }
+  
+  .print-header .document-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    color: #666;
+    margin-top: 10pt;
+  }
+  
+  /* Document content */
+  .print-content {
+    margin-top: 20pt;
+  }
+  
+  .print-section {
+    margin-bottom: 20pt;
+    page-break-inside: avoid;
+  }
+  
+  .print-section h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 10pt 0;
+    padding: 8pt;
+    background: #f8f9fa;
+    border-left: 4pt solid #2d5016;
+  }
+  
+  .print-section h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 15pt 0 8pt 0;
+  }
+  
+  /* Tables */
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10pt 0;
+    font-size: 10pt;
+  }
+  
+  .print-table th {
+    background-color: #2d5016;
+    color: white;
+    font-weight: bold;
+    padding: 8pt;
+    text-align: left;
+    border: 1pt solid #000;
+    font-size: 10pt;
+  }
+  
+  .print-table td {
+    padding: 6pt 8pt;
+    border: 1pt solid #ccc;
+    vertical-align: top;
+  }
+  
+  .print-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+  
+  .print-table tr:hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Statistics cards */
+  .print-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 15pt 0;
+    flex-wrap: wrap;
+  }
+  
+  .print-stat-card {
+    background: #f8f9fa;
+    border: 2pt solid #2d5016;
+    border-radius: 4pt;
+    padding: 12pt;
+    text-align: center;
+    min-width: 120pt;
+    margin: 5pt;
+  }
+  
+  .print-stat-number {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #2d5016;
+    display: block;
+  }
+  
+  .print-stat-label {
+    font-size: 9pt;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+    margin-top: 4pt;
+  }
+  
+  /* Beneficiary list */
+  .print-beneficiary-list {
+    margin: 10pt 0;
+  }
+  
+  .print-beneficiary-item {
+    border: 1pt solid #ddd;
+    margin: 5pt 0;
+    padding: 8pt;
+    background: #fafafa;
+  }
+  
+  .print-beneficiary-name {
+    font-weight: bold;
+    color: #2d5016;
+    font-size: 11pt;
+  }
+  
+  .print-beneficiary-details {
+    font-size: 9pt;
+    color: #666;
+    margin-top: 4pt;
+  }
+  
+  /* Status indicators */
+  .print-status {
+    display: inline-block;
+    padding: 2pt 6pt;
+    border-radius: 3pt;
+    font-size: 8pt;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .print-status.distributed {
+    background: #d4edda;
+    color: #155724;
+    border: 1pt solid #c3e6cb;
+  }
+  
+  .print-status.pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1pt solid #ffeaa7;
+  }
+  
+  .print-status.unclaimed {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1pt solid #f5c6cb;
+  }
+  
+  /* Page breaks */
+  .page-break {
+    page-break-before: always;
+  }
+  
+  .no-break {
+    page-break-inside: avoid;
+  }
+  
+  /* Footer */
+  .print-footer {
+    margin-top: 30pt;
+    padding-top: 10pt;
+    border-top: 1pt solid #ddd;
+    font-size: 9pt;
+    color: #666;
+    text-align: center;
+  }
+  
+  /* Grid layouts for print */
+  .print-grid {
+    display: grid;
+    gap: 10pt;
+    margin: 10pt 0;
+  }
+  
+  .print-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .print-grid-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  .print-grid-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  
+  /* Utility classes */
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  .text-bold { font-weight: bold; }
+  .text-small { font-size: 9pt; }
+  .text-large { font-size: 14pt; }
+  .mb-10 { margin-bottom: 10pt; }
+  .mb-15 { margin-bottom: 15pt; }
+  .mt-10 { margin-top: 10pt; }
+  .mt-15 { margin-top: 15pt; }
+  
+  /* Currency formatting */
+  .currency {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+  }
+  
+  /* Date formatting */
+  .date {
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Official Letterhead Styles */
+  .official-letterhead {
+    margin-bottom: 20pt;
+  }
+
+  .letterhead-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10pt;
+  }
+
+  .official-logo {
+    height: 50pt;
+    max-width: 100pt;
+  }
+
+  .title-section {
+    text-align: center;
+    flex: 1;
+  }
+
+  .title-section h1 {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 2pt 0;
+    letter-spacing: 1pt;
+  }
+
+  .title-section h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 2pt 0;
+  }
+
+  .office-address {
+    font-size: 9pt;
+    color: #666;
+    margin: 0;
+    font-style: italic;
+  }
+
+  .letterhead-divider {
+    height: 2pt;
+    background: linear-gradient(to right, #2d5016, #4a7c59, #2d5016);
+    margin: 5pt 0;
+  }
+
+  /* Document Title */
+  .document-title {
+    text-align: center;
+    margin: 20pt 0;
+  }
+
+  .document-title h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 5pt 0;
+    letter-spacing: 1pt;
+  }
+
+  .document-subtitle {
+    font-size: 11pt;
+    color: #666;
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* Program Information */
+  .program-info-section {
+    margin: 15pt 0;
+    padding: 10pt;
+    border: 2pt solid #2d5016;
+    background: #f8f9fa;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8pt;
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .info-item label {
+    font-weight: bold;
+    color: #2d5016;
+    font-size: 10pt;
+  }
+
+  .info-value {
+    font-size: 10pt;
+    color: #333;
+  }
+
+  /* Distribution Table */
+  .distribution-table-section {
+    margin: 20pt 0;
+  }
+
+  .distribution-table-section h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #2d5016;
+    text-align: center;
+    margin: 0 0 10pt 0;
+    padding: 8pt;
+    background: #f8f9fa;
+    border: 1pt solid #2d5016;
+  }
+
+  .distribution-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+    margin: 10pt 0;
+  }
+
+  .distribution-table th {
+    background-color: #2d5016;
+    color: white;
+    font-weight: bold;
+    padding: 6pt;
+    text-align: center;
+    border: 1pt solid #000;
+    font-size: 9pt;
+  }
+
+  .distribution-table td {
+    padding: 4pt 6pt;
+    border: 1pt solid #000;
+    vertical-align: middle;
+  }
+
+  .distribution-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+
+  .beneficiary-name {
+    font-weight: bold;
+    color: #2d5016;
+  }
+
+  .rsbsa-number {
+    font-family: 'Courier New', monospace;
+    font-size: 8pt;
+  }
+
+  .address {
+    font-size: 8pt;
+    color: #666;
+  }
+
+  .item-name {
+    font-weight: 500;
+  }
+
+  .quantity {
+    font-weight: bold;
+  }
+
+  .value {
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+  }
+
+  .signature-cell {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .signature-line {
+    height: 20pt;
+    border-bottom: 1pt solid #000;
+    margin: 2pt 0;
+  }
+
+  .empty-signature {
+    height: 20pt;
+  }
+
+  /* Summary Section */
+  .summary-section {
+    margin: 20pt 0;
+    padding: 10pt;
+    border: 2pt solid #5b9aa0;
+    background: #f0f8ff;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10pt;
+  }
+
+  .summary-item {
+    text-align: center;
+  }
+
+  .summary-item label {
+    display: block;
+    font-weight: bold;
+    color: #5b9aa0;
+    font-size: 9pt;
+    margin-bottom: 4pt;
+  }
+
+  .summary-value {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* Signatures Section */
+  .signatures-section {
+    margin: 30pt 0;
+  }
+
+  .signatures-section h2 {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #2d5016;
+    text-align: center;
+    margin: 0 0 20pt 0;
+    padding: 8pt;
+    background: #f8f9fa;
+    border: 1pt solid #2d5016;
+  }
+
+  .signatures-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30pt;
+    margin-top: 20pt;
+  }
+
+  .signature-box {
+    text-align: center;
+    padding: 15pt;
+    border: 2pt solid #2d5016;
+    background: #f8f9fa;
+  }
+
+  .signature-line-large {
+    height: 40pt;
+    border-bottom: 2pt solid #000;
+    margin-bottom: 10pt;
+  }
+
+  .signature-name {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin-bottom: 5pt;
+  }
+
+  .signature-title {
+    font-size: 10pt;
+    color: #666;
+    margin-bottom: 8pt;
+  }
+
+  .signature-date {
+    font-size: 9pt;
+    color: #666;
+  }
+
+  /* Notes Section */
+  .notes-section {
+    margin: 20pt 0;
+    padding: 10pt;
+    border: 1pt solid #ddd;
+    background: #fafafa;
+  }
+
+  .notes-section h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2d5016;
+    margin: 0 0 10pt 0;
+  }
+
+  .notes-content p {
+    font-size: 9pt;
+    margin: 4pt 0;
+    line-height: 1.3;
+  }
+
+  /* Document Footer */
+  .document-footer {
+    margin-top: 30pt;
+    padding-top: 10pt;
+    border-top: 1pt solid #ddd;
+    text-align: center;
+  }
+
+  .footer-content p {
+    font-size: 8pt;
+    color: #666;
+    margin: 2pt 0;
+  }
+}
+
+/* Screen styles (for preview) */
+@media screen {
+  .print-only {
+    display: none;
+  }
+  
+  .print-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+}

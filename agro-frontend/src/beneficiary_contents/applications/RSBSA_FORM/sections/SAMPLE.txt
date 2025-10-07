@@ -1,0 +1,1073 @@
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import {
+  Grid,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Alert,
+  Paper,
+  Avatar,
+  LinearProgress,
+  Stack,
+  Chip,
+  Divider,
+  alpha,
+  IconButton,
+  Tooltip,
+  Badge
+} from '@mui/material';
+import {
+  Assessment as AssessmentIcon,
+  Person as PersonIcon,
+  Agriculture as AgricultureIcon,
+  Landscape as LandscapeIcon,
+  Edit as EditIcon,
+  CheckCircle as CheckCircleIcon,
+  Category as CategoryIcon,
+  Pets as PetsIcon,
+  Grain as GrainIcon,
+  LocalFlorist as LocalFloristIcon,
+  Water as WaterIcon,
+  LocationOn as LocationIcon,
+  Phone as PhoneIcon,
+  Cake as CakeIcon,
+  VerifiedUser as VerifiedIcon,
+  ErrorOutline as ErrorIcon,
+  TaskAlt as TaskAltIcon,
+  Timeline as TimelineIcon,
+  TrendingUp as TrendingUpIcon,
+  Visibility as VisibilityIcon,
+  KeyboardArrowRight as ArrowRightIcon
+} from '@mui/icons-material';
+
+const ReviewSection = ({ formData, errors, onEdit, getCommodityById, commoditiesToUse = [] }) => {
+  // Safety checks
+  if (!formData || !formData.beneficiaryDetails) {
+    return (
+      <Box sx={{ 
+        p: 6, 
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #fff5f5 0%, #ffebee 100%)',
+        borderRadius: 4,
+        border: '2px dashed #ef5350'
+      }}>
+        <ErrorIcon sx={{ fontSize: 80, color: 'error.main', mb: 3, opacity: 0.7 }} />
+        <Typography variant="h5" color="error" fontWeight="600" gutterBottom>
+          Form Data Unavailable
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+          We couldn't load your application data. This might be a temporary issue.
+        </Typography>
+        <Button variant="contained" color="error" size="large">
+          Reload Page
+        </Button>
+      </Box>
+    );
+  }
+
+  const hasErrors = Object.keys(errors || {}).length > 0;
+
+  // Helper functions
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not provided';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const formatBoolean = (value) => value ? 'Yes' : 'No';
+  
+  const formatEnum = (value) => {
+    if (!value) return 'Not specified';
+    return value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  // Use the same commodity summary logic from FarmParcelsSection
+  const getCommoditySummary = () => {
+    const summary = {};
+
+    // Process farm parcels and commodities using the same logic as FarmParcelsSection
+    (formData.farmParcels || []).forEach(parcel => {
+      (parcel.commodities || []).forEach(commodity => {
+        // Use the passed getCommodityById function
+        const commodityInfo = getCommodityById ? getCommodityById(commodity.commodity_id) : null;
+        
+        if (commodityInfo) {
+          const categoryName = commodityInfo.category?.name || 'Other';
+          const categoryKey = categoryName.toLowerCase();
+          
+          // Initialize category if not exists
+          if (!summary[categoryKey]) {
+            summary[categoryKey] = {
+              name: categoryName,
+              count: 0,
+              totalArea: 0,
+              totalHeads: 0
+            };
+          }
+          
+          // Add to summary
+          summary[categoryKey].count++;
+          summary[categoryKey].totalArea += parseFloat(commodity.size_hectares) || 0;
+          summary[categoryKey].totalHeads += parseInt(commodity.number_of_heads) || 0;
+        }
+      });
+    });
+
+    return summary;
+  };
+
+  const commoditySummary = getCommoditySummary();
+
+  const getCommodityIcon = (commodity) => {
+    const icons = {
+      rice: <GrainIcon fontSize="medium" />,
+      corn: <GrainIcon fontSize="medium" />,
+      hvc: <LocalFloristIcon fontSize="medium" />,
+      fisheries: <WaterIcon fontSize="medium" />,
+      livestocks: <PetsIcon fontSize="medium" />
+    };
+    return icons[commodity] || <CategoryIcon fontSize="medium" />;
+  };
+
+  const getCommodityColor = (commodity) => {
+    const colors = {
+      rice: '#4caf50',
+      corn: '#ff9800',
+      hvc: '#e91e63',
+      fisheries: '#2196f3',
+      livestocks: '#9c27b0'
+    };
+    return colors[commodity] || '#757575';
+  };
+
+  // Calculate completion
+  const completionPercentage = (() => {
+    let completed = 0;
+    if (formData.beneficiaryDetails) completed++;
+    if (formData.farmProfile) completed++;
+    if (formData.farmParcels?.length > 0) completed++;
+    return (completed / 3) * 100;
+  })();
+
+  // Calculate totals
+  const totalParcels = (formData.farmParcels || []).length;
+  const totalFarmArea = (formData.farmParcels || []).reduce((sum, parcel) => sum + (parseFloat(parcel.total_farm_area) || 0), 0);
+  
+  // Calculate total livestock heads from all categories that might have heads
+  const totalLivestockHeads = Object.values(commoditySummary).reduce((total, category) => {
+    return total + (category.totalHeads || 0);
+  }, 0);
+
+  const EditButton = ({ onClick, color = 'primary' }) => (
+    <Tooltip title="Edit this section" arrow placement="top">
+      <IconButton
+        onClick={onClick}
+        sx={{
+          background: `linear-gradient(135deg, ${alpha(color, 0.1)} 0%, ${alpha(color, 0.05)} 100%)`,
+          border: `2px solid ${alpha(color, 0.2)}`,
+          '&:hover': {
+            background: `linear-gradient(135deg, ${alpha(color, 0.2)} 0%, ${alpha(color, 0.1)} 100%)`,
+            transform: 'scale(1.05)',
+          },
+          transition: 'all 0.2s ease-in-out'
+        }}
+      >
+        <EditIcon sx={{ color }} />
+      </IconButton>
+    </Tooltip>
+  );
+
+  return (
+    <Box sx={{ minHeight: '100vh', bgcolor: '#fafafa', pb: 4 }}>
+      <Stack spacing={4}>
+        {/* Hero Header Section */}
+        <Box
+          sx={{
+            position: 'relative',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: 4,
+            overflow: 'hidden',
+            color: 'white',
+            p: 6,
+            textAlign: 'center',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'url("data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpolygon points="0,40 40,0 40,40"/%3E%3C/g%3E%3C/svg%3E")',
+              opacity: 0.3
+            }
+          }}
+        >
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Avatar 
+              sx={{ 
+                width: 100, 
+                height: 100, 
+                mx: 'auto', 
+                mb: 3,
+                background: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(20px)',
+                border: '3px solid rgba(255,255,255,0.3)'
+              }}
+            >
+              <AssessmentIcon sx={{ fontSize: 48 }} />
+            </Avatar>
+            
+            <Typography variant="h3" fontWeight="800" gutterBottom sx={{ letterSpacing: -1 }}>
+              Application Review
+            </Typography>
+            
+            <Typography variant="h6" sx={{ mb: 4, opacity: 0.9, fontWeight: 300, maxWidth: 700, mx: 'auto' }}>
+              Take a moment to review all your information before submitting your RSBSA enrollment application
+            </Typography>
+            
+            {/* Progress Section */}
+            <Box sx={{ maxWidth: 500, mx: 'auto', mb: 4 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="body1" fontWeight="600">Application Progress</Typography>
+                <Typography variant="body1" fontWeight="700">
+                  {Math.round(completionPercentage)}% Complete
+                </Typography>
+              </Box>
+              <LinearProgress 
+                variant="determinate" 
+                value={completionPercentage} 
+                sx={{ 
+                  height: 12, 
+                  borderRadius: 6,
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  '& .MuiLinearProgress-bar': {
+                    background: 'linear-gradient(90deg, #4caf50 0%, #8bc34a 100%)',
+                    borderRadius: 6,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  }
+                }} 
+              />
+            </Box>
+
+            {/* Quick Stats */}
+            <Grid container spacing={3} sx={{ maxWidth: 600, mx: 'auto' }}>
+              <Grid item xs={4}>
+                <Box>
+                  <Typography variant="h4" fontWeight="700">
+                    {totalParcels}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Farm Parcels
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <Box>
+                  <Typography variant="h4" fontWeight="700">
+                    {totalFarmArea.toFixed(1)}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Total Hectares
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <Box>
+                  <Typography variant="h4" fontWeight="700">
+                    {Object.keys(commoditySummary).length}
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Commodity Types
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+
+        {/* Validation Status */}
+        {hasErrors ? (
+          <Alert 
+            severity="error" 
+            icon={<ErrorIcon />}
+            sx={{ 
+              borderRadius: 3,
+              border: '2px solid #ffcdd2',
+              background: 'linear-gradient(135deg, #ffebee 0%, #fff)',
+              '& .MuiAlert-message': { width: '100%' }
+            }}
+          >
+            <Typography variant="h6" fontWeight="700" gutterBottom color="error">
+              ⚠️ Please Fix These Issues
+            </Typography>
+            <List dense>
+              {Object.entries(errors).map(([field, error]) => (
+                <ListItem key={field} sx={{ py: 0.5, px: 0 }}>
+                  <ListItemIcon sx={{ minWidth: 32 }}>
+                    <ErrorIcon color="error" fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={error} 
+                    secondary={`Field: ${field.replace(/_/g, ' ')}`}
+                    primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
+                    secondaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Alert>
+        ) : (
+          <Alert 
+            severity="success" 
+            icon={<TaskAltIcon />}
+            sx={{ 
+              borderRadius: 3,
+              border: '2px solid #c8e6c9',
+              background: 'linear-gradient(135deg, #e8f5e8 0%, #fff)',
+            }}
+          >
+            <Typography variant="h6" fontWeight="700" gutterBottom color="success.main">
+              ✅ All Information Complete
+            </Typography>
+            <Typography variant="body1">
+              Your application is ready for submission. Review the details below and proceed when ready.
+            </Typography>
+          </Alert>
+        )}
+
+        {/* Personal Information Section */}
+        <Card 
+          elevation={0}
+          sx={{ 
+            borderRadius: 4, 
+            border: '2px solid #e3f2fd',
+            background: 'linear-gradient(135deg, #fff 0%, #f8faff 100%)',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease',
+            '&:hover': { 
+              transform: 'translateY(-4px)',
+              boxShadow: '0 12px 40px rgba(25, 118, 210, 0.15)'
+            }
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            {/* Section Header */}
+            <Box 
+              sx={{ 
+                p: 4,
+                background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                color: 'white',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #1976d2, #42a5f5, #1976d2)'
+                }
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56 }}>
+                    <PersonIcon sx={{ fontSize: 32 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h5" fontWeight="700" gutterBottom>
+                      Personal Information
+                    </Typography>
+                    <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                      Basic beneficiary details and contact information
+                    </Typography>
+                  </Box>
+                </Box>
+                <EditButton onClick={() => onEdit?.(1)} color="#ffffff" />
+              </Box>
+            </Box>
+            
+            {/* Content */}
+            <Box sx={{ p: 4 }}>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={3}>
+                    <Box sx={{ 
+                      p: 3, 
+                      borderRadius: 2, 
+                      background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)',
+                      border: '1px solid #bbdefb'
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                        <LocationIcon sx={{ color: '#1976d2', fontSize: 24 }} />
+                        <Typography variant="h6" fontWeight="600" color="#1976d2">
+                          Location Details
+                        </Typography>
+                      </Box>
+                      <Typography variant="h5" fontWeight="700" color="text.primary">
+                        {formData.beneficiaryDetails?.barangay || 'Not provided'}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Opol, Misamis Oriental, Philippines
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ 
+                      p: 3, 
+                      borderRadius: 2, 
+                      background: 'linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%)',
+                      border: '1px solid #f8bbd9'
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                        <CakeIcon sx={{ color: '#e91e63', fontSize: 24 }} />
+                        <Typography variant="h6" fontWeight="600" color="#e91e63">
+                          Birth Information
+                        </Typography>
+                      </Box>
+                      <Typography variant="h5" fontWeight="700" color="text.primary">
+                        {formatDate(formData.beneficiaryDetails?.birth_date)}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Date of Birth
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Grid>
+                
+                <Grid item xs={12} md={6}>
+                  <Stack spacing={3}>
+                    <Box sx={{ 
+                      p: 3, 
+                      borderRadius: 2, 
+                      background: 'linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%)',
+                      border: '1px solid #c8e6c9'
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                        <PhoneIcon sx={{ color: '#4caf50', fontSize: 24 }} />
+                        <Typography variant="h6" fontWeight="600" color="#4caf50">
+                          Contact Number
+                        </Typography>
+                      </Box>
+                      <Typography variant="h5" fontWeight="700" color="text.primary">
+                        {formData.beneficiaryDetails?.contact_number || 'Not provided'}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Primary Contact
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ 
+                      p: 3, 
+                      borderRadius: 2, 
+                      background: 'linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%)',
+                      border: '1px solid #ffcc02'
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                        <VerifiedIcon sx={{ color: '#ff9800', fontSize: 24 }} />
+                        <Typography variant="h6" fontWeight="600" color="#ff9800">
+                          Civil Status
+                        </Typography>
+                      </Box>
+                      <Typography variant="h5" fontWeight="700" color="text.primary">
+                        {formatEnum(formData.beneficiaryDetails?.civil_status)}
+                      </Typography>
+                      <Typography variant="body1" color="text.secondary">
+                        Marital Status
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Farm Profile Section */}
+        <Card 
+          elevation={0}
+          sx={{ 
+            borderRadius: 4, 
+            border: '2px solid #e8f5e8',
+            background: 'linear-gradient(135deg, #fff 0%, #f8fff8 100%)',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease',
+            '&:hover': { 
+              transform: 'translateY(-4px)',
+              boxShadow: '0 12px 40px rgba(46, 125, 50, 0.15)'
+            }
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            {/* Section Header */}
+            <Box 
+              sx={{ 
+                p: 4,
+                background: 'linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%)',
+                color: 'white',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #2e7d32, #66bb6a, #2e7d32)'
+                }
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56 }}>
+                    <AgricultureIcon sx={{ fontSize: 32 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h5" fontWeight="700" gutterBottom>
+                      Farm Profile & Livelihood
+                    </Typography>
+                    <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                      Agricultural activities and livelihood information
+                    </Typography>
+                  </Box>
+                </Box>
+                <EditButton onClick={() => onEdit?.(2)} color="#ffffff" />
+              </Box>
+            </Box>
+            
+            {/* Content */}
+            <Box sx={{ p: 4 }}>
+              <Stack spacing={4}>
+                {/* Primary Livelihood */}
+                <Box sx={{ 
+                  p: 4, 
+                  background: 'linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%)',
+                  borderRadius: 3,
+                  border: '2px solid #c8e6c9',
+                  textAlign: 'center'
+                }}>
+                  <TrendingUpIcon sx={{ fontSize: 48, color: '#2e7d32', mb: 2 }} />
+                  <Typography variant="h6" fontWeight="700" color="#2e7d32" gutterBottom>
+                    Primary Livelihood Category
+                  </Typography>
+                  <Typography variant="h4" fontWeight="700" color="text.primary">
+                    {(() => {
+                      const categoryId = formData.farmProfile?.livelihood_category_id;
+                      const categoryNames = { 1: 'Farmer', 2: 'Farm Worker', 3: 'Fisherfolk', 4: 'Agri-Youth' };
+                      return categoryNames[categoryId] || `Category ${categoryId}` || 'Not selected';
+                    })()}
+                  </Typography>
+                </Box>
+
+                <Grid container spacing={3}>
+                  {/* Farmer Activities */}
+                  <Grid item xs={12} md={6}>
+                    <Card 
+                      variant="outlined" 
+                      sx={{ 
+                        borderRadius: 3,
+                        border: '2px solid #e3f2fd',
+                        background: 'linear-gradient(135deg, #f8faff 0%, #fff 100%)',
+                        height: '100%'
+                      }}
+                    >
+                      <CardContent sx={{ p: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                          <AgricultureIcon sx={{ color: '#1976d2', fontSize: 28 }} />
+                          <Typography variant="h6" fontWeight="700" color="#1976d2">
+                            Farmer Activities
+                          </Typography>
+                        </Box>
+                        <List dense>
+                          {[
+                            { key: 'rice', label: 'Rice Production', icon: <GrainIcon /> },
+                            { key: 'corn', label: 'Corn Production', icon: <GrainIcon /> },
+                            { key: 'other_crops', label: 'Other Crops', icon: <LocalFloristIcon /> },
+                            { key: 'livestock', label: 'Livestock', icon: <PetsIcon /> }
+                          ].map((activity) => {
+                            const isActive = formData.farmerActivities?.[activity.key];
+                            return (
+                              <ListItem key={activity.key} sx={{ px: 0, py: 1, borderRadius: 2 }}>
+                                <ListItemIcon sx={{ minWidth: 40 }}>
+                                  <Box sx={{ 
+                                    p: 1, 
+                                    borderRadius: '50%', 
+                                    bgcolor: isActive ? alpha('#4caf50', 0.1) : alpha('#757575', 0.1),
+                                    color: isActive ? '#4caf50' : '#757575'
+                                  }}>
+                                    {React.cloneElement(activity.icon, { fontSize: 'small' })}
+                                  </Box>
+                                </ListItemIcon>
+                                <ListItemText 
+                                  primary={activity.label}
+                                  primaryTypographyProps={{ 
+                                    variant: 'body1', 
+                                    fontWeight: 500,
+                                    color: isActive ? 'text.primary' : 'text.secondary'
+                                  }}
+                                />
+                                <Chip 
+                                  size="small" 
+                                  label={isActive ? 'Active' : 'Inactive'}
+                                  color={isActive ? 'info' : 'default'}
+                                  variant={isActive ? 'filled' : 'outlined'}
+                                  sx={{ fontWeight: 600 }}
+                                />
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                </Grid>
+              </Stack>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Farm Parcels Section */}
+        <Card 
+          elevation={0}
+          sx={{ 
+            borderRadius: 4, 
+            border: '2px solid #fff3e0',
+            background: 'linear-gradient(135deg, #fff 0%, #fffef7 100%)',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease',
+            '&:hover': { 
+              transform: 'translateY(-4px)',
+              boxShadow: '0 12px 40px rgba(245, 124, 0, 0.15)'
+            }
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            {/* Section Header */}
+            <Box 
+              sx={{ 
+                p: 4,
+                background: 'linear-gradient(135deg, #f57c00 0%, #ffb74d 100%)',
+                color: 'white',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #f57c00, #ffb74d, #f57c00)'
+                }
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56 }}>
+                    <LandscapeIcon sx={{ fontSize: 32 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h5" fontWeight="700" gutterBottom>
+                      Farm Parcels & Commodities
+                    </Typography>
+                    <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                      Land ownership and agricultural production details
+                    </Typography>
+                  </Box>
+                </Box>
+                <EditButton onClick={() => onEdit?.(3)} color="#ffffff" />
+              </Box>
+            </Box>
+            
+            {/* Content */}
+            <Box sx={{ p: 4 }}>
+              {!formData.farmParcels?.length ? (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  p: 6,
+                  background: 'linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%)',
+                  borderRadius: 3,
+                  border: '2px dashed #ffb74d'
+                }}>
+                  <ErrorIcon sx={{ fontSize: 64, color: '#f57c00', mb: 2, opacity: 0.7 }} />
+                  <Typography variant="h6" fontWeight="600" color="#f57c00" gutterBottom>
+                    No Farm Parcels Added
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    At least one farm parcel is required to complete your application.
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    onClick={() => onEdit?.(3)}
+                    sx={{ 
+                      background: 'linear-gradient(135deg, #f57c00 0%, #ffb74d 100%)',
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 600
+                    }}
+                  >
+                    Add Farm Parcel
+                  </Button>
+                </Box>
+              ) : (
+                <Stack spacing={4}>
+                  {/* Commodity Summary Cards */}
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                      <TimelineIcon sx={{ color: '#f57c00', fontSize: 28 }} />
+                      <Typography variant="h6" fontWeight="700" color="#f57c00">
+                        Commodity Overview
+                      </Typography>
+                    </Box>
+                    
+                    {Object.keys(commoditySummary).length === 0 ? (
+                      <Alert severity="info" sx={{ borderRadius: 2 }}>
+                        <Typography variant="body1" fontWeight="500">
+                          No commodity data available
+                        </Typography>
+                        <Typography variant="body2">
+                          Please check if commodity information is properly configured.
+                        </Typography>
+                      </Alert>
+                    ) : (
+                      <Grid container spacing={2}>
+                        {Object.entries(commoditySummary).map(([commodity, data]) => {
+                          if (data.count === 0) return null;
+                          
+                          const commodityColor = getCommodityColor(commodity);
+                          
+                          return (
+                            <Grid item xs={6} sm={4} md={3} key={commodity}>
+                              <Card 
+                                sx={{ 
+                                  borderRadius: 3,
+                                  border: `2px solid ${alpha(commodityColor, 0.3)}`,
+                                  background: `linear-gradient(135deg, ${alpha(commodityColor, 0.05)} 0%, #fff 100%)`,
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: `0 8px 25px ${alpha(commodityColor, 0.2)}`
+                                  }
+                                }}
+                              >
+                                <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                                  <Box sx={{ mb: 2, color: commodityColor }}>
+                                    {getCommodityIcon(commodity)}
+                                  </Box>
+                                  <Typography variant="subtitle1" fontWeight="700" gutterBottom color={commodityColor}>
+                                    {data.name}
+                                  </Typography>
+                                  <Typography variant="h4" color="text.primary" fontWeight="700" gutterBottom>
+                                    {data.count}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                                    {data.totalArea.toFixed(1)} hectares
+                                  </Typography>
+                                  {data.totalHeads > 0 && (
+                                    <Chip 
+                                      size="small" 
+                                      label={`${data.totalHeads} heads`}
+                                      sx={{ 
+                                        bgcolor: alpha(commodityColor, 0.1),
+                                        color: commodityColor,
+                                        fontWeight: 600
+                                      }}
+                                    />
+                                  )}
+                                </CardContent>
+                              </Card>
+                            </Grid>
+                          );
+                        })}
+                      </Grid>
+                    )}
+                  </Box>
+
+                  {/* Total Summary Dashboard */}
+                  <Box sx={{ 
+                    p: 4, 
+                    borderRadius: 4,
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    textAlign: 'center',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      background: 'url("data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpolygon points="0,40 40,0 40,40"/%3E%3C/g%3E%3C/svg%3E")',
+                      opacity: 0.3
+                    }
+                  }}>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                      <Typography variant="h5" fontWeight="700" gutterBottom sx={{ mb: 3 }}>
+                        📊 Agricultural Summary
+                      </Typography>
+                      <Grid container spacing={3}>
+                        <Grid item xs={4}>
+                          <Box>
+                            <Typography variant="h3" fontWeight="800" gutterBottom>
+                              {totalParcels}
+                            </Typography>
+                            <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                              Farm Parcels
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Box>
+                            <Typography variant="h3" fontWeight="800" gutterBottom>
+                              {totalFarmArea.toFixed(1)}
+                            </Typography>
+                            <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                              Total Area (ha)
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Box>
+                            <Typography variant="h3" fontWeight="800" gutterBottom>
+                              {(() => {
+                                // Calculate livestock heads directly from farm parcels
+                                let totalHeads = 0;
+                                (formData.farmParcels || []).forEach(parcel => {
+                                  (parcel.commodities || []).forEach(commodity => {
+                                    const commodityInfo = getCommodityById ? getCommodityById(commodity.commodity_id) : null;
+                                    const categoryName = commodityInfo?.category?.name || '';
+                                    const isLivestock = categoryName.toLowerCase().includes('livestock');
+                                    if (isLivestock) {
+                                      totalHeads += parseInt(commodity.number_of_heads) || 0;
+                                    }
+                                  });
+                                });
+                                return totalHeads;
+                              })()}
+                            </Typography>
+                            <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                              Livestock Heads
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Box>
+
+                  {/* Detailed Parcel Cards */}
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                      <VisibilityIcon sx={{ color: '#f57c00', fontSize: 28 }} />
+                      <Typography variant="h6" fontWeight="700" color="#f57c00">
+                        Detailed Parcel Information
+                      </Typography>
+                    </Box>
+                    <Grid container spacing={3}>
+                      {(formData.farmParcels || []).map((parcel, index) => {
+                        // Calculate livestock heads for this parcel
+                        const parcelLivestockHeads = (parcel.commodities || []).reduce((total, commodity) => {
+                          const commodityInfo = getCommodityById ? getCommodityById(commodity.commodity_id) : null;
+                          const categoryName = commodityInfo?.category?.name || '';
+                          const isLivestock = categoryName.toLowerCase().includes('livestock');
+                          return total + (isLivestock ? (parseInt(commodity.number_of_heads) || 0) : 0);
+                        }, 0);
+
+                        return (
+                          <Grid item xs={12} md={6} key={index}>
+                            <Card 
+                              variant="outlined" 
+                              sx={{ 
+                                borderRadius: 3,
+                                border: '2px solid #ffcc02',
+                                background: 'linear-gradient(135deg, #fffef7 0%, #fff 100%)',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: '0 8px 25px rgba(255, 193, 7, 0.2)'
+                                }
+                              }}
+                            >
+                              <CardContent sx={{ p: 3 }}>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                  <Typography variant="h6" fontWeight="700" color="#f57c00">
+                                    🌾 Parcel #{index + 1}
+                                  </Typography>
+                                  <Badge badgeContent={parcel.parcel_number} color="warning" />
+                                </Box>
+                                
+                                <Stack spacing={2}>
+                                  <Box sx={{ p: 2, bgcolor: alpha('#f57c00', 0.05), borderRadius: 2 }}>
+                                    <Grid container spacing={2}>
+                                      <Grid item xs={6}>
+                                        <Typography variant="caption" color="text.secondary" fontWeight="600">
+                                          LOCATION
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight="600">
+                                          {parcel.barangay}, Opol
+                                        </Typography>
+                                      </Grid>
+                                      <Grid item xs={6}>
+                                        <Typography variant="caption" color="text.secondary" fontWeight="600">
+                                          AREA
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight="600">
+                                          {parcel.total_farm_area} hectares
+                                        </Typography>
+                                      </Grid>
+                                      <Grid item xs={6}>
+                                        <Typography variant="caption" color="text.secondary" fontWeight="600">
+                                          TENURE
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight="600">
+                                          {formatEnum(parcel.tenure_type)}
+                                        </Typography>
+                                      </Grid>
+                                      <Grid item xs={6}>
+                                        <Typography variant="caption" color="text.secondary" fontWeight="600">
+                                          COMMODITIES
+                                        </Typography>
+                                        <Typography variant="body1" fontWeight="600">
+                                          {(parcel.commodities || []).length} types
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                  </Box>
+
+                                  {parcelLivestockHeads > 0 && (
+                                    <Box sx={{ textAlign: 'center' }}>
+                                      <Chip 
+                                        icon={<PetsIcon />}
+                                        label={`${parcelLivestockHeads} Livestock Heads`}
+                                        color="warning"
+                                        variant="outlined"
+                                        sx={{ fontWeight: 600 }}
+                                      />
+                                    </Box>
+                                  )}
+                                  
+                                  {/* Commodity breakdown */}
+                                  {(parcel.commodities || []).length > 0 && (
+                                    <Box>
+                                      <Typography variant="subtitle2" fontWeight="600" gutterBottom color="#f57c00">
+                                        Commodity Breakdown:
+                                      </Typography>
+                                      <Box sx={{ maxHeight: 120, overflowY: 'auto' }}>
+                                        {(parcel.commodities || []).map((commodity, commodityIndex) => {
+                                          const commodityInfo = getCommodityById ? getCommodityById(commodity.commodity_id) : null;
+                                          const commodityName = commodityInfo?.display_name || commodityInfo?.commodity_name || `ID: ${commodity.commodity_id}`;
+                                          const heads = parseInt(commodity.number_of_heads) || 0;
+                                          
+                                          return (
+                                            <Box key={commodityIndex} sx={{ 
+                                              p: 1.5, 
+                                              mb: 1, 
+                                              bgcolor: alpha('#f57c00', 0.03), 
+                                              borderRadius: 1,
+                                              border: `1px solid ${alpha('#f57c00', 0.1)}`
+                                            }}>
+                                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="body2" fontWeight="600">
+                                                  {commodityName}
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                                  <Chip size="small" label={`${commodity.size_hectares} ha`} />
+                                                  {heads > 0 && (
+                                                    <Chip size="small" label={`${heads} heads`} color="warning" />
+                                                  )}
+                                                </Box>
+                                              </Box>
+                                            </Box>
+                                          );
+                                        })}
+                                      </Box>
+                                    </Box>
+                                  )}
+                                </Stack>
+                              </CardContent>
+                            </Card>
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                  </Box>
+                </Stack>
+              )}
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Final Completion Card */}
+        <Box
+          sx={{
+            p: 6,
+            textAlign: 'center',
+            borderRadius: 4,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3Ccircle cx="10" cy="10" r="1"/%3E%3Ccircle cx="50" cy="10" r="1"/%3E%3Ccircle cx="10" cy="50" r="1"/%3E%3Ccircle cx="50" cy="50" r="1"/%3E%3C/g%3E%3C/svg%3E")',
+              opacity: 0.4
+            }
+          }}
+        >
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <CheckCircleIcon sx={{ fontSize: 72, mb: 3, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }} />
+            <Typography variant="h4" gutterBottom fontWeight="800" sx={{ letterSpacing: -0.5 }}>
+              🎉 Review Complete!
+            </Typography>
+            <Typography variant="h6" sx={{ mb: 3, opacity: 0.9, fontWeight: 300, maxWidth: 600, mx: 'auto' }}>
+              Your application information has been thoroughly reviewed and is ready for final submission. 
+              All sections are complete and validated.
+            </Typography>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+              <Button 
+                variant="contained" 
+                size="large" 
+                endIcon={<ArrowRightIcon />}
+                sx={{ 
+                  bgcolor: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(10px)',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  color: 'white',
+                  px: 4,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.3)',
+                    transform: 'translateY(-2px)',
+                  }
+                }}
+              >
+                Proceed to Submit
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Stack>
+    </Box>
+  );
+};
+
+export default ReviewSection;

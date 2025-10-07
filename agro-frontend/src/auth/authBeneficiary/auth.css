@@ -1,0 +1,1121 @@
+/* Registration Form Styles */
+
+/* Base background and animations */
+.registration-container {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 50%, #fefbeb 100%);
+}
+
+/* Animated background blobs */
+.background-blob {
+  position: absolute;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  filter: blur(60px);
+  opacity: 0.3;
+}
+
+.blob-1 {
+  top: 0;
+  left: -4rem;
+  width: 18rem;
+  height: 18rem;
+  background-color: #bbf7d0;
+  animation: blob 7s infinite;
+}
+
+.blob-2 {
+  top: 0;
+  right: -4rem;
+  width: 18rem;
+  height: 18rem;
+  background-color: #fde68a;
+  animation: blob 7s infinite;
+  animation-delay: 2s;
+}
+
+.blob-3 {
+  bottom: -2rem;
+  left: 5rem;
+  width: 18rem;
+  height: 18rem;
+  background-color: #a7f3d0;
+  animation: blob 7s infinite;
+  animation-delay: 4s;
+}
+
+@keyframes blob {
+  0% { 
+    transform: translate(0px, 0px) scale(1); 
+  }
+  33% { 
+    transform: translate(30px, -50px) scale(1.1); 
+  }
+  66% { 
+    transform: translate(-20px, 20px) scale(0.9); 
+  }
+  100% { 
+    transform: translate(0px, 0px) scale(1); 
+  }
+}
+
+/* Subtle texture overlay */
+.texture-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Layout containers */
+.main-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  min-height: 100vh;
+}
+
+.hero-section {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.form-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Hero content */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.brand-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #15803d;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-title-accent {
+  display: block;
+  color: #15803d;
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 32rem;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.feature-item:hover {
+  transform: translateX(0.25rem);
+}
+
+.feature-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.feature-item:hover .feature-dot {
+  transform: scale(1.25);
+}
+
+.feature-text {
+  color: #475569;
+  transition: color 0.2s ease;
+}
+
+.feature-item:hover .feature-text {
+  color: #1e293b;
+}
+
+/* Input Components Styles */
+.input-field-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-field-container:focus-within .input-icon,
+.input-field-container:focus-within .textarea-icon {
+  color: #16a34a;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #64748b;
+  transition: color 0.3s ease;
+  z-index: 2;
+}
+
+/* Add these styles to your Registration.css file */
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+  font-weight: 500;
+}
+
+/* Style for input fields with errors */
+.input-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.input-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for password fields with errors */
+.password-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.password-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for textarea fields with errors */
+.textarea-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.textarea-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for checkbox fields with errors */
+.checkbox-field.error + label {
+  color: #dc2626;
+}
+
+/* Animation for error messages */
+.error-message {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.textarea-icon {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #64748b;
+  transition: color 0.3s ease;
+  z-index: 2;
+}
+
+.input-field {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  color: #1e293b;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input-field.has-icon {
+  padding-left: 3rem;
+}
+
+.input-field.has-toggle {
+  padding-right: 3rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  color: #1e293b;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: none;
+  transition: all 0.3s ease;
+}
+
+.textarea-field.has-icon {
+  padding-left: 3rem;
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.textarea-field::placeholder {
+  color: #94a3b8;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  color: #475569;
+}
+
+.toggle-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Checkbox Styles */
+.checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.checkbox-label {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-custom {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.25rem;
+  border-radius: 0.25rem;
+  border: 2px solid #d1d5db;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkbox-custom.checked {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border-color: #16a34a;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+}
+
+.checkbox-custom:hover {
+  border-color: #9ca3af;
+}
+
+.checkbox-custom.checked:hover {
+  border-color: #16a34a;
+}
+
+.checkbox-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: white;
+}
+
+.checkbox-text {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.checkbox-text a {
+  color: #15803d;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(21, 128, 61, 0.5);
+}
+
+.checkbox-text a:hover {
+  color: #166534;
+}
+
+/* Progress indicator */
+.progress-container {
+  margin-bottom: 2rem;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.step-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.step-circle.active {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.25);
+}
+
+.step-circle.inactive {
+  background: white;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.step-connector {
+  width: 4rem;
+  height: 0.125rem;
+  margin: 0 1rem;
+  transition: all 0.3s ease;
+}
+
+.step-connector.active {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+}
+
+.step-connector.inactive {
+  background: #e2e8f0;
+}
+
+.progress-text {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* Form container */
+.form-container {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid #e2e8f0;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* Form steps */
+.step-container {
+  margin-bottom: 2rem;
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.step-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.step-subtitle {
+  color: #475569;
+  font-size: 1rem;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Input grid */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Form navigation */
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #15803d, #166534);
+  box-shadow: 0 8px 15px -3px rgba(22, 163, 74, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.btn.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.8; 
+  }
+}
+
+/* Login link */
+.login-link {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.login-text {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.login-link-text {
+  color: #15803d;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.login-link-text:hover {
+  color: #166534;
+  border-bottom-color: #15803d;
+}
+
+/* Alert messages */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.alert-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Responsive design */
+@media (min-width: 1024px) {
+  .hero-section {
+    display: flex;
+    width: 50%;
+  }
+  
+  .form-section {
+    width: 50%;
+  }
+  
+  .hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-section {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+  
+  .hero-title {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .form-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .form-navigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .step-connector {
+    width: 3rem;
+  }
+
+  .step-circle {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+  }
+
+  .progress-steps {
+    padding: 0 1rem;
+  }
+}
+/* Add these styles to your Registration.css file */
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+  font-weight: 500;
+}
+
+/* Style for input fields with errors */
+.input-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.input-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for password fields with errors */
+.password-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.password-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for textarea fields with errors */
+.textarea-field.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.textarea-field.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+/* Style for checkbox fields with errors */
+.checkbox-field.error + label {
+  color: #dc2626;
+}
+
+/* Success message styles */
+.success-message {
+  display: block;
+  color: #059669;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  margin-left: 0.25rem;
+  font-weight: 500;
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Animation for error and success messages */
+.error-message,
+.success-message {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading spinner for username check */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.terms-section {
+  margin-top: 1rem;
+}
+
+.terms-container {
+  margin-bottom: 1rem;
+}
+
+.terms-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.terms-content {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+}
+
+.terms-text {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.terms-checkbox {
+  margin-top: 1rem;
+}
+
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Add these styles to your existing auth.css file */
+
+/* Login Options Section */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 0 0.25rem;
+}
+
+.login-options .checkbox-field {
+  margin: 0;
+}
+
+.login-options .checkbox-field label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* Forgot Password Link */
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: #059669;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.forgot-password-link:hover {
+  color: #047857;
+  text-decoration: underline;
+}
+
+.forgot-password-link:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.forgot-password-link:active {
+  color: #065f46;
+}
+
+/* Forgot Password Actions */
+.forgot-password-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .forgot-password-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .forgot-password-actions .btn {
+    flex: 1;
+  }
+  
+  .forgot-password-actions .btn:first-child {
+    max-width: 140px;
+  }
+}
+
+/* Enhanced Button Styles for Login */
+.btn.btn-secondary {
+  background: transparent;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  font-weight: 500;
+}
+
+.btn.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+  transform: translateY(-1px);
+}
+
+.btn.btn-secondary:active {
+  transform: translateY(0);
+  background: #f3f4f6;
+}
+
+/* Login Form Specific Adjustments */
+.form-container .checkbox-field {
+  margin-bottom: 0;
+}
+
+.form-container .checkbox-field input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1.5px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-container .checkbox-field input[type="checkbox"]:checked {
+  background: #10b981;
+  border-color: #10b981;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+}
+
+.form-container .checkbox-field input[type="checkbox"]:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+.form-container .checkbox-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Reset Password Form Specific Styles */
+.form-step[data-step="reset"] .form-step-subtitle {
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* Enhanced Focus States for Login */
+.input-field:focus-within {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.input-field:focus-within .input-icon {
+  color: #10b981;
+}
+
+/* Loading State for Login Button */
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Mobile Responsiveness for Login Options */
+@media (max-width: 479px) {
+  .login-options {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .forgot-password-link {
+    align-self: center;
+  }
+  
+  .forgot-password-actions {
+    gap: 0.75rem;
+  }
+  
+  .forgot-password-actions .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Success Message for Password Reset */
+.password-reset-success {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.password-reset-success::before {
+  content: '✓';
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-weight: bold;
+  color: #10b981;
+}
+
+/* Smooth Transitions for Form Switching */
+.form-container {
+  transition: all 0.3s ease;
+}
+
+.form-step {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Link Styling */
+.login-link-text {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.login-link-text::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #10b981;
+  transition: width 0.2s ease;
+}
+
+.login-link-text:hover::after {
+  width: 100%;
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .form-step,
+  .btn,
+  .forgot-password-link,
+  .login-link-text::after {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .forgot-password-link {
+    text-decoration: underline;
+  }
+  
+  .btn.btn-secondary {
+    border-width: 2px;
+  }
+  
+  .form-container .checkbox-field input[type="checkbox"] {
+    border-width: 2px;
+  }
+}

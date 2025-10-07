@@ -1,0 +1,131 @@
+/* Print styles for Program Summary Reports */
+@media print {
+  /* Hide non-printable elements */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .page-break {
+    page-break-before: always;
+  }
+  
+  /* Optimize colors for printing */
+  * {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* Remove shadows and borders that don't print well */
+  .MuiPaper-root {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  /* Ensure text is readable */
+  body {
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+  }
+  
+  /* Header styling */
+  h1, h2, h3, h4, h5, h6 {
+    color: #2d5016 !important;
+    page-break-after: avoid;
+  }
+  
+  /* Table styling */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+  
+  th, td {
+    border: 1px solid #ccc !important;
+    padding: 8px !important;
+    text-align: left !important;
+  }
+  
+  th {
+    background-color: #f5f5f5 !important;
+    font-weight: bold !important;
+  }
+  
+  /* Card styling */
+  .MuiCard-root {
+    border: 1px solid #ddd !important;
+    margin-bottom: 16px !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Grid layout adjustments */
+  .MuiGrid-container {
+    display: block !important;
+  }
+  
+  .MuiGrid-item {
+    width: 100% !important;
+    margin-bottom: 16px !important;
+  }
+  
+  /* Button styling - hide buttons in print */
+  .MuiButton-root {
+    display: none !important;
+  }
+  
+  /* Icon styling */
+  svg {
+    display: none !important;
+  }
+  
+  /* Ensure proper margins */
+  @page {
+    margin: 0.5in;
+    size: A4;
+  }
+  
+  /* Program summary specific styles */
+  .program-summary {
+    font-family: Arial, sans-serif !important;
+  }
+  
+  .program-summary h1 {
+    font-size: 24pt !important;
+    margin-bottom: 16pt !important;
+  }
+  
+  .program-summary h2 {
+    font-size: 18pt !important;
+    margin-top: 20pt !important;
+    margin-bottom: 12pt !important;
+  }
+  
+  .program-summary h3 {
+    font-size: 14pt !important;
+    margin-top: 16pt !important;
+    margin-bottom: 8pt !important;
+  }
+  
+  /* Statistics cards */
+  .stat-card {
+    border: 2px solid #4a7c59 !important;
+    background-color: #f8fdf9 !important;
+    padding: 16pt !important;
+    margin-bottom: 12pt !important;
+    text-align: center !important;
+  }
+  
+  .stat-number {
+    font-size: 20pt !important;
+    font-weight: bold !important;
+    color: #2d5016 !important;
+  }
+  
+  .stat-label {
+    font-size: 10pt !important;
+    color: #666 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5pt !important;
+  }
+}
