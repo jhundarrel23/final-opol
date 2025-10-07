@@ -47,9 +47,10 @@ const ComprehensiveServiceEventModal = ({ open, onClose, onSubmit }) => {
   }, []);
 
   useEffect(() => {
-    if (open) resetForm();
-    else resetForm();
-  }, [open, resetForm]);
+    if (open) {
+      resetForm();
+    }
+  }, [open]);
 
   const validateStep = (step) => {
     const newErrors = {};
