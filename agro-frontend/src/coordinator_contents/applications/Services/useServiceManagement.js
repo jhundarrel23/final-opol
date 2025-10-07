@@ -23,7 +23,7 @@ const extractDataArray = (responseData) => {
 };
 
 // Service Catalogs
-export const useServiceCatalogs = (filters = {}) => {
+export const useServiceCatalogs = (filters) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -31,7 +31,7 @@ export const useServiceCatalogs = (filters = {}) => {
   const fetchCatalogs = useCallback(async (customFilters = {}) => {
     setLoading(true); setError(null);
     try {
-      const params = { ...filters, ...customFilters };
+      const params = filters ? { ...filters, ...customFilters } : customFilters;
       const response = await axiosInstance.get(SERVICE_CATALOGS_ENDPOINT, { params });
       const extracted = extractDataArray(response.data);
       setData(extracted);
@@ -43,7 +43,7 @@ export const useServiceCatalogs = (filters = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [JSON.stringify(filters)]);
 
   useEffect(() => { fetchCatalogs(); }, [fetchCatalogs]);
 
@@ -112,7 +112,7 @@ export const useDeleteServiceCatalog = () => {
 };
 
 // Service Events
-export const useServiceEvents = (filters = {}) => {
+export const useServiceEvents = (filters) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -120,7 +120,7 @@ export const useServiceEvents = (filters = {}) => {
   const fetchEvents = useCallback(async (customFilters = {}) => {
     setLoading(true); setError(null);
     try {
-      const params = { ...filters, ...customFilters };
+      const params = filters ? { ...filters, ...customFilters } : customFilters;
       const response = await axiosInstance.get(SERVICE_EVENTS_ENDPOINT, { params });
       const extracted = extractDataArray(response.data);
       setData(extracted);
@@ -132,7 +132,7 @@ export const useServiceEvents = (filters = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [JSON.stringify(filters)]);
 
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
@@ -269,7 +269,7 @@ export const useCreateServiceEventStock = () => {
 };
 
 // Beneficiaries List (for selection)
-export const useBeneficiaries = (filters = {}) => {
+export const useBeneficiaries = (filters) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -277,7 +277,7 @@ export const useBeneficiaries = (filters = {}) => {
   const fetchBeneficiaries = useCallback(async (customFilters = {}) => {
     setLoading(true); setError(null);
     try {
-      const params = { ...filters, ...customFilters };
+      const params = filters ? { ...filters, ...customFilters } : customFilters;
       const response = await axiosInstance.get(BENEFICIARIES_ENDPOINT, { params });
       const extracted = extractDataArray(response.data);
       setData(extracted);
@@ -289,7 +289,7 @@ export const useBeneficiaries = (filters = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [JSON.stringify(filters)]);
 
   useEffect(() => { fetchBeneficiaries(); }, [fetchBeneficiaries]);
 
@@ -298,7 +298,7 @@ export const useBeneficiaries = (filters = {}) => {
 };
 
 // Inventory Stocks (for selection)
-export const useInventoryStocks = (filters = {}) => {
+export const useInventoryStocks = (filters) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -306,7 +306,7 @@ export const useInventoryStocks = (filters = {}) => {
   const fetchStocks = useCallback(async (customFilters = {}) => {
     setLoading(true); setError(null);
     try {
-      const params = { ...filters, ...customFilters };
+      const params = filters ? { ...filters, ...customFilters } : customFilters;
       const response = await axiosInstance.get(INVENTORY_STOCKS_ENDPOINT, { params });
       const extracted = extractDataArray(response.data);
       setData(extracted);
@@ -318,7 +318,7 @@ export const useInventoryStocks = (filters = {}) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [JSON.stringify(filters)]);
 
   useEffect(() => { fetchStocks(); }, [fetchStocks]);
 
